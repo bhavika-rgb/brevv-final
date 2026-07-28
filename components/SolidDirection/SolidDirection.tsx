@@ -203,46 +203,6 @@ function initSphereReveal(): (() => void) | void {
 
   const REVEAL_AT = 0.55;
 
-  const AUTOSCROLL_TRIGGER = 0.4;
-  const AUTOSCROLL_TARGET_P = 1.0;
-  let autoScrolling = false;
-  let autoScrollDone = false;
-
-  const triggerAutoScroll = () => {
-    if (autoScrolling || autoScrollDone) return;
-    autoScrolling = true;
-    const rect = section.getBoundingClientRect();
-    const sectionTopY = window.scrollY + rect.top;
-    const total = rect.height - window.innerHeight;
-    const targetY = sectionTopY + AUTOSCROLL_TARGET_P * total;
-    const startY = window.scrollY;
-    const dist = targetY - startY;
-    const duration = Math.min(3000, Math.max(1200, Math.abs(dist) / 0.34));
-    const startT = performance.now();
-    const step = (now: number) => {
-      if (!autoScrolling) return;
-      const t = Math.min(1, (now - startT) / duration);
-      const ease = 1 - Math.pow(1 - t, 3);
-      window.scrollTo(0, startY + dist * ease);
-      if (t < 1) requestAnimationFrame(step);
-      else {
-        autoScrolling = false;
-        autoScrollDone = true;
-      }
-    };
-    requestAnimationFrame(step);
-  };
-
-  const cancelOnWheel = (e: WheelEvent) => {
-    if (autoScrolling && e.deltaY < -0.5) autoScrolling = false;
-  };
-  window.addEventListener("wheel", cancelOnWheel, { passive: true });
-
-  const cancelOnTouch = () => {
-    if (autoScrolling) autoScrolling = false;
-  };
-  window.addEventListener("touchmove", cancelOnTouch, { passive: true });
-
   const onScroll = () => {
     targetProgress = computeProgress();
   };
@@ -303,9 +263,6 @@ function initSphereReveal(): (() => void) | void {
     const s = 0.4 + Math.min(currentProgress, 0.4) * 3.5;
     group.scale.set(s, s, s);
 
-    if (targetProgress >= AUTOSCROLL_TRIGGER) triggerAutoScroll();
-    else if (targetProgress < 0.25) autoScrollDone = false;
-
     const speed = baseRotSpeed + currentProgress * 0.006;
     group.rotation.y += speed;
     group.rotation.x = Math.sin(Date.now() * 0.0002) * 0.15;
@@ -348,12 +305,9 @@ function initSphereReveal(): (() => void) | void {
   // Cleanup on unmount
   return () => {
     cancelAnimationFrame(rafId);
-    autoScrolling = false;
     resizeObserver?.disconnect();
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onResize);
-    window.removeEventListener("wheel", cancelOnWheel);
-    window.removeEventListener("touchmove", cancelOnTouch);
     if (fullscreenBtn) fullscreenBtn.removeEventListener("click", handleVideoClick);
     videoLayer.removeEventListener("click", handleVideoClick);
     document.removeEventListener("fullscreenchange", onFullscreenChange);
