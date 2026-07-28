@@ -29,7 +29,7 @@ const scaleCards = [
       </>
     ),
     linkText: "Explore Corporate L&D",
-    image: "/assets/images/image(25).png",
+    image: "/assets/images/image (25).png",
     alt: "Corporate L&D Platform",
     cardClass: "card-purple",
   },
@@ -43,7 +43,7 @@ const scaleCards = [
       </>
     ),
     linkText: "Explore Programs",
-    image: "/assets/images/image(26).png",
+    image: "/assets/images/image (26).png",
     alt: "K-12 & Vocational Platform",
     cardClass: "card-emerald",
   },
