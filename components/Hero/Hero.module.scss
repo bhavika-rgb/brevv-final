@@ -1018,18 +1018,6 @@
   }
 }
 
-@media (max-width: 380px) {
-  .hero-content-section {
-    padding-top: 82px;
-  }
-}
-
-@media (max-width: 340px) {
-  .hero-content-section {
-    padding-top: 74px;
-  }
-}
-
 /* Hero headline sitting over the video (was the old intro gate heading) */
 .hero-headline {
   font-family: 'Raleway', sans-serif;
@@ -1037,10 +1025,11 @@
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   white-space: nowrap;
   margin: 0 auto;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 140, 255, 0.3);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 140, 255, 0.5);
   opacity: 0;
   animation: fade-in-up 0.9s ease forwards 4.4s;
   position: relative;
@@ -1077,12 +1066,31 @@
 }
 
 @media (max-width: 380px) {
+  .hero-content-section {
+    padding-top: 135px;
+  }
   .hero-headline {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
     white-space: normal !important;
     max-width: 100% !important;
     width: 100% !important;
-    font-size: clamp(0.88rem, 4vw, 1.1rem) !important;
-    line-height: 1.22 !important;
+    font-size: clamp(1.05rem, 5vw, 1.4rem) !important;
+    line-height: 1.25 !important;
+  }
+}
+
+@media (max-width: 340px) {
+  .hero-content-section {
+    padding-top: 120px;
+  }
+  .hero-headline {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 1.05rem !important;
+    line-height: 1.25 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
   }
 }
 
@@ -1136,7 +1144,7 @@
     width: 100%;
   }
   .hero-headline {
-    font-size: 0.95rem !important;
+    font-size: 1.05rem !important;
     line-height: 1.25 !important;
     max-width: 100% !important;
     white-space: normal !important;
