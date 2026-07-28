@@ -993,39 +993,153 @@
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
+/* Hero content wrapper sitting right below the absolute navbar and layered over the video */
+.hero-content-section {
+  padding-top: clamp(100px, 12vh, 140px);
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 1024px) {
+  .hero-content-section {
+    padding-top: clamp(88px, 10vh, 115px);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content-section {
+    padding-top: 76px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content-section {
+    padding-top: 72px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-content-section {
+    padding-top: 82px;
+  }
+}
+
+@media (max-width: 340px) {
+  .hero-content-section {
+    padding-top: 74px;
+  }
+}
+
 /* Hero headline sitting over the video (was the old intro gate heading) */
 .hero-headline {
   font-family: 'Raleway', sans-serif;
-  /* vw-based so the line scales with the viewport; stays on ONE line on wide
-     screens, wraps to a readable multi-line block on tablet/phone (below). */
-  font-size: clamp(1rem, 3.4vw, 54px);
+  font-size: clamp(1.6rem, 3.4vw, 54px);
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: #ffffff;
   white-space: nowrap;
   margin: 0 auto;
-  // text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
-  /* Fades in after the gates have opened and revealed the video */
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 140, 255, 0.3);
   opacity: 0;
   animation: fade-in-up 0.9s ease forwards 4.4s;
+  position: relative;
+  z-index: 10;
 }
 
-/* Tablet & phone: one line would shrink the copy to an unreadable size, so let
-   it wrap to a few lines and bump the font back up to a legible scale. */
+/* Tablet & phone: keep headline to a compact block so it never extends down onto the video */
 @media (max-width: 1024px) {
   .hero-headline {
     white-space: normal;
-    max-width: 18ch;
-    font-size: clamp(1.9rem, 6vw, 3rem);
-    line-height: 1.15;
+    max-width: 26ch;
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+    line-height: 1.18;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-headline {
+    white-space: normal;
+    max-width: 26ch;
+    font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+    line-height: 1.2;
   }
 }
 
 @media (max-width: 480px) {
   .hero-headline {
-    max-width: 15ch;
-    font-size: clamp(1.6rem, 8vw, 2.4rem);
+    white-space: normal;
+    max-width: 100%;
+    width: 100%;
+    font-size: clamp(0.95rem, 4.2vw, 1.25rem);
+    line-height: 1.22;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-headline {
+    white-space: normal !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    font-size: clamp(0.88rem, 4vw, 1.1rem) !important;
+    line-height: 1.22 !important;
+  }
+}
+
+@media (max-width: 340px) {
+  .hero {
+    padding: 110px 0 0;
+  }
+  .hero-main-title,
+  .sui-hero-container .hero-main-title {
+    font-size: 1.85rem !important;
+    line-height: 1.25 !important;
+  }
+  .hero-description,
+  .sui-hero-container .hero-description {
+    font-size: 0.9rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .hero-cta-wrapper,
+  .sui-hero-container .hero-cta-wrapper {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+  .btn-hero-explore,
+  .btn-hero-secondary,
+  .sui-hero-container .btn-hero-explore,
+  .sui-hero-container .btn-hero-secondary {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.88rem !important;
+    justify-content: center !important;
+  }
+  .saas-mockup-window {
+    border-radius: 14px;
+  }
+  .saas-sidebar {
+    padding: 1rem;
+  }
+  .saas-content {
+    padding: 1rem;
+  }
+  .saas-inner-card {
+    padding: 1.25rem 0.85rem;
+  }
+  .saas-title {
+    font-size: 1.3rem;
+  }
+  .saas-join-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+  .hero-headline {
+    font-size: 0.95rem !important;
+    line-height: 1.25 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
   }
 }
 

@@ -58,8 +58,7 @@ export default function Hero() {
       </div>
 
       <section
-        className="relative z-10 flex flex-col items-center justify-start flex-grow w-full px-4 text-center overflow-hidden pb-12"
-        style={{ paddingTop: '190px' }}>
+        className="hero-content-section relative z-10 flex flex-col items-center justify-start flex-grow w-full px-4 text-center overflow-hidden pb-12">
 
         <h1 className="hero-headline">The Future of Learning, Architected for Today.</h1>
 

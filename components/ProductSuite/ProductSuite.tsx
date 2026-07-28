@@ -68,77 +68,77 @@ export default function ProductSuite() {
       <div className="container">
         <div className="suite-pin-wrap">
 
-        <div className="suite-split-header">
-          <div className="suite-header-left">
-            <span className="section-tag" style={{ marginBottom: '0.75rem', display: 'inline-block' }}>The All-In-One Suite</span>
-            <h2 className="about-title font-bold" style={{ margin: '0', lineHeight: '1.15', fontSize: 'clamp(1.9rem, 6vw, 3rem)', fontWeight: '850' }}>
-              Replace Complexity<br />with Clarity.</h2>
-          </div>
-          <div className="suite-header-right">
-            <p className="suite-header-desc">Disconnected tools often lead to data silos and technical friction. Brevv simplifies your infrastructure by consolidating essential learning tools into a unified "Bento-box" ecosystem. Every module is built for harmony, ensuring information flows seamlessly across your entire organization</p>
-          </div>
-        </div>
-
-        <div className="suite-tabs-wrapper desktop-only">
-          <ul className="suite-tabs-pill">
-            {suiteTabs.map((item) => (
-              <li className="suite-tab-item" key={item.tabId}>
-                <button className={`suite-tab-btn-pill${item.active ? " active" : ""}`} data-suite-tab={item.tabId}>
-                  {item.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="suite-select-wrapper mobile-only-select-wrapper">
-          <select id="suite-tab-select" className="suite-tab-select-input" defaultValue="suite-community">
-            {suiteTabs.map((item) => (
-              <option value={item.tabId} key={item.tabId}>{item.label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="relative w-full z-10">
-
-          <div
-            className="absolute -top-20 -left-20 w-[450px] h-[450px] rounded-full bg-sky-400/35 blur-[100px] pointer-events-none z-0">
-          </div>
-          <div
-            className="absolute -bottom-24 -right-20 w-[500px] h-[500px] rounded-full bg-violet-400/30 blur-[120px] pointer-events-none z-0">
+          <div className="suite-split-header">
+            <div className="suite-header-left">
+              <span className="section-tag" style={{ marginBottom: '0.75rem', display: 'inline-block' }}>The All-In-One Suite</span>
+              <h2 className="about-title font-bold" style={{ margin: '0', lineHeight: '1.15', fontSize: 'clamp(1.9rem, 6vw, 3rem)', fontWeight: '850' }}>
+                Replace Complexity<br />with Clarity.</h2>
+            </div>
+            <div className="suite-header-right">
+              <p className="suite-header-desc">Disconnected tools often lead to data silos and technical friction. Brevv simplifies your infrastructure by consolidating essential learning tools into a unified "Bento-box" ecosystem. Every module is built for harmony, ensuring information flows seamlessly across your entire organization</p>
+            </div>
           </div>
 
-          <div className="mockup-browser-window relative z-10">
+          <div className="suite-tabs-wrapper desktop-only">
+            <ul className="suite-tabs-pill">
+              {suiteTabs.map((item) => (
+                <li className="suite-tab-item" key={item.tabId}>
+                  <button className={`suite-tab-btn-pill${item.active ? " active" : ""}`} data-suite-tab={item.tabId}>
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            <div className="browser-window-header">
-              <div className="window-controls">
-                <span className="control-dot close"></span>
-                <span className="control-dot minimize"></span>
-                <span className="control-dot maximize"></span>
-              </div>
-              <div className="browser-address-bar">
-                <span>https://brevv.org</span>
-              </div>
+          <div className="suite-select-wrapper mobile-only-select-wrapper">
+            <select id="suite-tab-select" className="suite-tab-select-input" defaultValue="suite-community">
+              {suiteTabs.map((item) => (
+                <option value={item.tabId} key={item.tabId}>{item.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative w-full z-10">
+
+            <div
+              className="absolute -top-20 -left-20 w-[450px] h-[450px] rounded-full bg-sky-400/35 blur-[100px] pointer-events-none z-0">
+            </div>
+            <div
+              className="absolute -bottom-24 -right-20 w-[500px] h-[500px] rounded-full bg-violet-400/30 blur-[120px] pointer-events-none z-0">
             </div>
 
-            <div className="suite-content-stage">
-              {suitePanels.map((item) => (
-                <div className={`suite-content-new${item.active ? " active" : ""}`} id={item.tabId} key={item.tabId}>
-                  <div className="suite-grid-new">
-                    <div className="suite-text-panel">
-                      <span className="suite-pill-new">{item.pill}</span>
-                      <h3>{item.heading}</h3>
-                      <p>{item.paragraph}</p>
-                    </div>
-                    <div className="suite-visual-panel">
-                      <img src={item.image} alt={item.alt} />
+            <div className="mockup-browser-window relative z-10">
+
+              <div className="browser-window-header">
+                <div className="window-controls">
+                  <span className="control-dot close"></span>
+                  <span className="control-dot minimize"></span>
+                  <span className="control-dot maximize"></span>
+                </div>
+                <div className="browser-address-bar">
+                  <span>https://brevvlms.com</span>
+                </div>
+              </div>
+
+              <div className="suite-content-stage">
+                {suitePanels.map((item) => (
+                  <div className={`suite-content-new${item.active ? " active" : ""}`} id={item.tabId} key={item.tabId}>
+                    <div className="suite-grid-new">
+                      <div className="suite-text-panel">
+                        <span className="suite-pill-new">{item.pill}</span>
+                        <h3>{item.heading}</h3>
+                        <p>{item.paragraph}</p>
+                      </div>
+                      <div className="suite-visual-panel">
+                        <img src={item.image} alt={item.alt} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </section>
@@ -151,13 +151,13 @@ function initProductSuite() {
   const section = document.querySelector<HTMLElement>('.product-suite-section');
   if (!section) return;
 
-  const pinWrap   = section.querySelector<HTMLElement>('.suite-pin-wrap');
-  const stage     = section.querySelector<HTMLElement>('.suite-content-stage');
-  const panels    = Array.from(section.querySelectorAll<HTMLElement>('.suite-content-new'));
-  const pillBtns  = Array.from(section.querySelectorAll<HTMLElement>('.suite-tab-btn-pill'));
+  const pinWrap = section.querySelector<HTMLElement>('.suite-pin-wrap');
+  const stage = section.querySelector<HTMLElement>('.suite-content-stage');
+  const panels = Array.from(section.querySelectorAll<HTMLElement>('.suite-content-new'));
+  const pillBtns = Array.from(section.querySelectorAll<HTMLElement>('.suite-tab-btn-pill'));
   const suiteSelect = document.getElementById('suite-tab-select') as HTMLSelectElement | null;
   const headingEl = section.querySelector<HTMLElement>('.about-title');
-  const descEl    = section.querySelector<HTMLElement>('.suite-header-desc');
+  const descEl = section.querySelector<HTMLElement>('.suite-header-desc');
   if (!panels.length) return;
 
   let current = 0;
@@ -363,7 +363,7 @@ function initProductSuite() {
         duration: { min: 0.2, max: 0.5 },
         ease: 'power2.inOut',
         directional: false   // snap to the NEAREST tab, not in the scroll direction —
-                             // stops momentum from carrying past a tab on its own
+        // stops momentum from carrying past a tab on its own
       },
       onUpdate: self => {
         const idx = Math.min(Math.round(self.progress * total), panels.length - 1);

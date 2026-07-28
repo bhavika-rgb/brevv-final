@@ -104,4 +104,20 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@media (max-width: 340px) {
+  .modal-card {
+    padding: 1.75rem 1rem !important;
+    width: 95% !important;
+  }
+  .modal-close-btn {
+    top: 0.75rem !important;
+    right: 0.75rem !important;
+  }
+  .form-group-modal input,
+  .form-group-modal select {
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.88rem !important;
+  }
+}
+
 

@@ -14,7 +14,7 @@ export default function Page() {
   return (
     <>
       <Hero />
-      <Ecosystem />
+       <Ecosystem />
       <CoreFoundations />
       <ProductSuite />
       <Comparison />
@@ -23,7 +23,7 @@ export default function Page() {
       <Sectors />
       <FAQ />
       <CTA />
-      <Foundary />
+      <Foundary /> 
     </>
   );
 }

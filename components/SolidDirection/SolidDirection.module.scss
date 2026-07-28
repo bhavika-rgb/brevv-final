@@ -1,9 +1,9 @@
-
 /* Get Solid Direction Section Styles */
 .solid-direction-section {
   position: relative;
   width: 100%;
-  height: 240vh; /* sphere expand → halo cover → video reveal (auto-scrolls through the rest) */
+  height: 240vh;
+  /* sphere expand → halo cover → video reveal (auto-scrolls through the rest) */
   background-color: #ffffff;
   overflow: visible;
 }
@@ -40,6 +40,121 @@
 
 .sd-video-layer.revealed {
   opacity: 1;
+  z-index: 10;
+}
+
+.sd-fullscreen-hint {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .sd-video-layer.revealed {
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .sd-fullscreen-hint {
+    display: flex !important;
+    position: absolute;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 0.65rem 1.3rem;
+    border-radius: 50px;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.02em;
+  }
+
+  .sd-video-layer.revealed .sd-fullscreen-hint {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sd-fullscreen-hint:hover {
+    background: #008CFF;
+    transform: translateX(-50%) translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 12px 35px rgba(0, 140, 255, 0.4);
+  }
+}
+
+/* Fullscreen Video Lightbox Modal Overlay */
+.sd-fullscreen-modal {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sd-fullscreen-modal-video {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Rotate video 90 degrees clockwise on mobile/phone screens in full screen mode */
+@media (max-width: 768px) {
+  .sd-fullscreen-modal-video {
+    width: 100vh !important;
+    height: 100vw !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    object-fit: contain !important;
+  }
+}
+
+.sd-modal-close-btn {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100000;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.sd-modal-close-btn:hover {
+  background: #008CFF;
+  transform: scale(1.1);
 }
 
 .sd-video-layer video {
@@ -49,11 +164,24 @@
   object-fit: cover;
 }
 
+@media (max-width: 768px) {
+  .sd-video-layer video {
+    width: 160vh;
+    height: 80vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    object-fit: cover;
+  }
+}
+
 .sd-video-layer::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(5, 8, 14, 0.25); /* subtle scrim so any overlaid content stays readable */
+  background: rgba(5, 8, 14, 0.25);
+  /* subtle scrim so any overlaid content stays readable */
 }
 
 /* --- Dark circular mask that grows to cover the screen, then fades out --- */
@@ -80,7 +208,8 @@
   top: 0;
   left: 0;
   display: block;
-  width: 100% !important;   /* beat any inline px three.js might set → no overflow */
+  width: 100% !important;
+  /* beat any inline px three.js might set → no overflow */
   height: 100% !important;
   max-width: 100%;
   z-index: 1;
@@ -94,7 +223,8 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center; /* centre the whole phrase, not each half */
+  justify-content: center;
+  /* centre the whole phrase, not each half */
   /* Space in the middle for the sphere to peek through. The two halves are now
      balanced in width ("Unlock Your" ≈ "Future Path"), so this gap sits at the
      screen centre — exactly where the sphere is. */
@@ -164,7 +294,8 @@
 @media (max-width: 1024px) {
   .sd-gate {
     flex-direction: column;
-    gap: clamp(120px, 32vw, 260px); /* vertical space for the sphere */
+    gap: clamp(120px, 32vw, 260px);
+    /* vertical space for the sphere */
   }
 
   .sd-half-left,
@@ -186,5 +317,17 @@
 
   .gate-title {
     font-size: clamp(1.6rem, 8.5vw, 2.8rem) !important;
+  }
+}
+
+@media (max-width: 340px) {
+  .sd-gate {
+    gap: clamp(80px, 28vw, 150px);
+  }
+
+  .gate-title {
+    font-size: 1.35rem !important;
+    white-space: normal !important;
+    text-align: center;
   }
 }

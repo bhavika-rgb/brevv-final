@@ -1,16 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import "./SolidDirection.module.scss";
 
 export default function SolidDirection() {
   const ran = useRef(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (ran.current) return;
-    ran.current = true;
-    return initSphereReveal();
+    const handleOpenModal = () => setIsModalOpen(true);
+    window.addEventListener("open-sd-video-modal", handleOpenModal);
+
+    if (!ran.current) {
+      ran.current = true;
+      initSphereReveal();
+    }
+
+    return () => {
+      window.removeEventListener("open-sd-video-modal", handleOpenModal);
+    };
   }, []);
 
   return (
@@ -23,6 +32,12 @@ export default function SolidDirection() {
             <video muted loop playsInline poster="">
               <source src="/assets/videos/main_2.mp4" type="video/mp4" />
             </video>
+            <button className="sd-fullscreen-hint" id="sd-fullscreen-btn" aria-label="Tap to view fullscreen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+              </svg>
+              <span>Tap to View Full Screen</span>
+            </button>
           </div>
 
           {/* Dark circle mask that grows to cover the screen, then fades to reveal the video */}
@@ -44,6 +59,29 @@ export default function SolidDirection() {
           <div className="sd-progress-track"><div className="sd-progress-fill" id="sd-progress-fill"></div></div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="sd-fullscreen-modal" onClick={() => setIsModalOpen(false)}>
+          <button
+            className="sd-modal-close-btn"
+            onClick={() => setIsModalOpen(false)}
+            aria-label="Close Fullscreen"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <video
+            className="sd-fullscreen-modal-video"
+            src="/assets/videos/main_2.mp4"
+            autoPlay
+            controls
+            playsInline
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 }
@@ -128,14 +166,9 @@ function initSphereReveal(): (() => void) | void {
     const w = stickyEl?.clientWidth || window.innerWidth;
     const h = stickyEl?.clientHeight || window.innerHeight;
     camera.aspect = w / h;
-    // Size the sphere against the SMALLER dimension so it stays a consistent
-    // fraction of the screen on every device/orientation (≈ desktop z = 6 in
-    // landscape; camera dollies back in portrait as the screen narrows).
-    camera.position.z = Math.min(40, Math.max(3.5, 6 * (h / Math.min(w, h))));
+    const isMobile = w <= 768;
+    camera.position.z = isMobile ? 6 : Math.min(40, Math.max(3.5, 6 * (h / Math.min(w, h))));
     camera.updateProjectionMatrix();
-    // updateStyle = false → do NOT write inline width/height px onto the canvas;
-    // the CSS (width/height: 100%) sizes the element, so it can never exceed its
-    // container and cause horizontal overflow.
     renderer.setSize(w, h, false);
   };
 
@@ -148,7 +181,8 @@ function initSphereReveal(): (() => void) | void {
   window.addEventListener("resize", onResize);
   applyViewport();
 
-  let progress = 0;
+  let targetProgress = 0;
+  let currentProgress = 0;
   const baseRotSpeed = 0.0015;
   let revealed = false;
   let videoIsPlaying = false;
@@ -169,11 +203,8 @@ function initSphereReveal(): (() => void) | void {
 
   const REVEAL_AT = 0.55;
 
-  // Once the sphere is fully grown (a little before the reveal), take over and
-  // auto-scroll quickly through the halo → video reveal so the user doesn't have
-  // to keep scrolling. Cancels the moment the user scrolls themselves.
-  const AUTOSCROLL_TRIGGER = 0.4; // sphere fully expanded
-  const AUTOSCROLL_TARGET_P = 1.0; // all the way to the section end — reveal + video, then exit
+  const AUTOSCROLL_TRIGGER = 0.4;
+  const AUTOSCROLL_TARGET_P = 1.0;
   let autoScrolling = false;
   let autoScrollDone = false;
 
@@ -186,15 +217,12 @@ function initSphereReveal(): (() => void) | void {
     const targetY = sectionTopY + AUTOSCROLL_TARGET_P * total;
     const startY = window.scrollY;
     const dist = targetY - startY;
-    // Scale duration with distance so the auto-scroll feels the SAME speed on
-    // every viewport height (a fixed duration is too fast on short screens and
-    // too slow on tall ones). ~0.34 px/ms, tuned on desktop, clamped for sanity.
-    const duration = Math.min(3000, Math.max(1200, Math.abs(dist) / 0.34)); // ms
+    const duration = Math.min(3000, Math.max(1200, Math.abs(dist) / 0.34));
     const startT = performance.now();
     const step = (now: number) => {
-      if (!autoScrolling) return; // user cancelled
+      if (!autoScrolling) return;
       const t = Math.min(1, (now - startT) / duration);
-      const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      const ease = 1 - Math.pow(1 - t, 3);
       window.scrollTo(0, startY + dist * ease);
       if (t < 1) requestAnimationFrame(step);
       else {
@@ -205,31 +233,35 @@ function initSphereReveal(): (() => void) | void {
     requestAnimationFrame(step);
   };
 
-  // Only an UPWARD wheel gesture cancels the auto-scroll (the user wants to go
-  // back). Downward wheel/trackpad inertia must NOT cancel it — that inertia is
-  // what carried the user to the trigger point in the first place. Programmatic
-  // scrollTo fires no wheel events, so this only catches real user input.
   const cancelOnWheel = (e: WheelEvent) => {
     if (autoScrolling && e.deltaY < -0.5) autoScrolling = false;
   };
   window.addEventListener("wheel", cancelOnWheel, { passive: true });
 
-  // Touch devices fire no wheel events. A finger placed back on the screen while
-  // the page is auto-scrolling means the user wants to take over, so cancel.
-  // (Momentum/inertia does NOT fire touchmove — the finger is already up — so
-  // this won't cancel the auto-scroll that the user's flick just triggered.)
   const cancelOnTouch = () => {
     if (autoScrolling) autoScrolling = false;
   };
   window.addEventListener("touchmove", cancelOnTouch, { passive: true });
 
   const onScroll = () => {
-    progress = computeProgress();
+    targetProgress = computeProgress();
+  };
 
-    // Text fully exits by 40% of the scroll. Below 1024px the phrase is stacked
-    // (see the CSS), so the two lines slide UP/DOWN instead of LEFT/RIGHT.
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  let rafId = 0;
+  const animate = () => {
+    rafId = requestAnimationFrame(animate);
+
+    // Smooth lerp for buttery motion on mobile & desktop
+    currentProgress += (targetProgress - currentProgress) * 0.12;
+    if (Math.abs(targetProgress - currentProgress) < 0.0001) {
+      currentProgress = targetProgress;
+    }
+
     const stacked = window.innerWidth <= 1024;
-    const textT = Math.min(progress, 0.4) / 0.4;
+    const textT = Math.min(currentProgress, 0.4) / 0.4;
     const shift = textT * (stacked ? window.innerHeight : window.innerWidth) * 0.65;
     if (stacked) {
       leftText.style.transform = `translateY(${-shift}px)`;
@@ -239,16 +271,13 @@ function initSphereReveal(): (() => void) | void {
       rightText.style.transform = `translateX(${shift}px)`;
     }
 
-    // 0    → 0.40  sphere expands, text slides away
-    // 0.40 → 0.55  sphere fades out while the dark halo grows to cover the screen
-    // ≥ 0.55       reveal fires once: halo fades out, video crossfades in (CSS, 0.7s)
     let sphereOpacity: number;
     let haloScale: number;
-    if (progress < 0.4) {
+    if (currentProgress < 0.4) {
       sphereOpacity = 1;
       haloScale = 0.02;
-    } else if (progress < REVEAL_AT) {
-      const t = (progress - 0.4) / (REVEAL_AT - 0.4);
+    } else if (currentProgress < REVEAL_AT) {
+      const t = (currentProgress - 0.4) / (REVEAL_AT - 0.4);
       sphereOpacity = 1 - t;
       haloScale = 0.02 + t * 1.0;
     } else {
@@ -259,7 +288,7 @@ function initSphereReveal(): (() => void) | void {
     canvas.style.opacity = String(sphereOpacity);
     halo.style.transform = `translate(-50%,-50%) scale(${haloScale})`;
 
-    const shouldReveal = progress >= REVEAL_AT;
+    const shouldReveal = currentProgress >= REVEAL_AT;
     if (shouldReveal !== revealed) {
       revealed = shouldReveal;
       halo.classList.toggle("revealed", revealed);
@@ -269,29 +298,52 @@ function initSphereReveal(): (() => void) | void {
 
     if (!revealed) halo.style.opacity = String(Math.min(1, haloScale));
 
-    if (progressFill) progressFill.style.width = progress * 100 + "%";
+    if (progressFill) progressFill.style.width = currentProgress * 100 + "%";
 
-    const s = 0.4 + Math.min(progress, 0.4) * 3.5;
+    const s = 0.4 + Math.min(currentProgress, 0.4) * 3.5;
     group.scale.set(s, s, s);
 
-    // Kick off the auto-scroll once the sphere is fully grown; allow it to run
-    // again only after the user has scrolled back well before the sphere phase.
-    if (progress >= AUTOSCROLL_TRIGGER) triggerAutoScroll();
-    else if (progress < 0.25) autoScrollDone = false;
-  };
+    if (targetProgress >= AUTOSCROLL_TRIGGER) triggerAutoScroll();
+    else if (targetProgress < 0.25) autoScrollDone = false;
 
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-
-  let rafId = 0;
-  const animate = () => {
-    rafId = requestAnimationFrame(animate);
-    const speed = baseRotSpeed + progress * 0.006;
+    const speed = baseRotSpeed + currentProgress * 0.006;
     group.rotation.y += speed;
     group.rotation.x = Math.sin(Date.now() * 0.0002) * 0.15;
     renderer.render(scene, camera);
   };
   animate();
+
+  // Fullscreen video handlers (triggers custom full-screen video lightbox with 90deg mobile rotation)
+  const fullscreenBtn = document.getElementById("sd-fullscreen-btn");
+  const openFullscreen = () => {
+    window.dispatchEvent(new CustomEvent("open-sd-video-modal"));
+  };
+
+  const handleVideoClick = (e: MouseEvent) => {
+    if (revealed && window.innerWidth <= 768) {
+      e.stopPropagation();
+      openFullscreen();
+    }
+  };
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", handleVideoClick);
+  }
+  videoLayer.addEventListener("click", handleVideoClick);
+
+  const onFullscreenChange = () => {
+    const isFS = document.fullscreenElement || (document as any).webkitFullscreenElement;
+    if (!isFS && revealVideo) {
+      revealVideo.muted = true;
+    }
+  };
+  document.addEventListener("fullscreenchange", onFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", onFullscreenChange);
+  if (revealVideo) {
+    revealVideo.addEventListener("webkitendfullscreen", () => {
+      revealVideo.muted = true;
+    });
+  }
 
   // Cleanup on unmount
   return () => {
@@ -302,6 +354,10 @@ function initSphereReveal(): (() => void) | void {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("wheel", cancelOnWheel);
     window.removeEventListener("touchmove", cancelOnTouch);
+    if (fullscreenBtn) fullscreenBtn.removeEventListener("click", handleVideoClick);
+    videoLayer.removeEventListener("click", handleVideoClick);
+    document.removeEventListener("fullscreenchange", onFullscreenChange);
+    document.removeEventListener("webkitfullscreenchange", onFullscreenChange);
     ptGeo.dispose();
     lineGeo.dispose();
     coreGeo.dispose();

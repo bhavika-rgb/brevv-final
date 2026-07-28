@@ -1,9 +1,10 @@
-
 /* Product Suite Switcher Section */
 .product-suite-section {
   padding: 80px 0 120px;
   background-color: #FAF9F5;
   border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .suite-select-wrapper {
@@ -42,12 +43,15 @@
 
 .suite-tabs-pill {
   display: inline-flex;
-     background: rgba(248, 250, 252, 0.9);
+  background: rgba(248, 250, 252, 0.9);
   border-radius: 0;
   padding: 6px;
   list-style: none;
   gap: 4px;
   border: 1px solid rgba(226, 232, 240, 0.85);
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .suite-tab-item {
@@ -109,9 +113,17 @@
   display: inline-block;
 }
 
-.control-dot.close { background: #ef4444; }
-.control-dot.minimize { background: #eab308; }
-.control-dot.maximize { background: #22c55e; }
+.control-dot.close {
+  background: #ef4444;
+}
+
+.control-dot.minimize {
+  background: #eab308;
+}
+
+.control-dot.maximize {
+  background: #22c55e;
+}
 
 .browser-address-bar {
   background: #ffffff;
@@ -250,21 +262,25 @@
   .product-suite-section {
     padding: 60px 0 80px;
   }
+
   .suite-split-header {
     flex-direction: column;
     gap: 1.5rem;
     align-items: flex-start;
     margin-bottom: 2.5rem;
   }
+
   .suite-tabs-wrapper.desktop-only {
     display: none !important;
   }
+
   .suite-select-wrapper.mobile-only-select-wrapper {
     display: block !important;
     width: 100%;
     max-width: 440px;
     margin: 0 auto 2.5rem;
   }
+
   .suite-tab-select-input {
     width: 100%;
     padding: 0.9rem 1.25rem;
@@ -287,17 +303,77 @@
     background-position: right 1.25rem center;
     background-size: 1.5rem;
   }
+
   .suite-tab-select-input:focus {
     border-color: #008CFF;
     box-shadow: 0 0 0 4px rgba(0, 140, 255, 0.15);
   }
+
   .suite-grid-new {
     grid-template-columns: 1fr;
     gap: 3rem;
     padding: 2.5rem 2rem;
   }
+
   .suite-visual-panel {
     order: -1;
+  }
+}
+
+@media (max-width: 340px) {
+  .product-suite-section {
+    padding: 40px 0 50px;
+  }
+  .suite-grid-new {
+    padding: 1.25rem 0.75rem !important;
+    gap: 1.5rem !important;
+  }
+  .suite-text-panel h3 {
+    font-size: 1.4rem !important;
+  }
+  .suite-text-panel p {
+    font-size: 0.88rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .suite-bullet {
+    font-size: 0.85rem !important;
+    gap: 8px !important;
+  }
+  .suite-roi-box {
+    padding: 10px 12px !important;
+    font-size: 0.82rem !important;
+  }
+  .browser-window-header {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+  }
+  .browser-address-bar {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .control-dot {
+    width: 8px !important;
+    height: 8px !important;
+  }
+  .comp-tab {
+    padding: 0.5rem 0.85rem !important;
+    font-size: 0.82rem !important;
+  }
+  .comp-panel {
+    padding: 1.25rem 0.85rem !important;
+  }
+  .comp-panel-title {
+    font-size: 1.2rem !important;
+  }
+  .comp-panel-desc {
+    font-size: 0.9rem !important;
+  }
+  .roi-mockup .bar {
+    width: 40px !important;
+    font-size: 0.72rem !important;
   }
 }
 
@@ -317,11 +393,13 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
   max-width: 100%;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .comparison-tabs::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
 }
 
 .comp-tab {
@@ -489,9 +567,17 @@
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .rollout-mockup .progress-bar {
@@ -548,10 +634,12 @@
   .comparison-showcase {
     flex-direction: column;
   }
+
   .giants-panel {
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }
+
   .comp-panel {
     padding: 2rem;
   }
@@ -637,9 +725,17 @@
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .rollout-mockup .progress-bar {
@@ -696,10 +792,12 @@
   .comparison-showcase {
     flex-direction: column;
   }
+
   .giants-panel {
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }
+
   .comp-panel {
     padding: 2rem;
   }
@@ -708,21 +806,36 @@
 
 /* End of file */
 /* ── Sticky-scroll Product Suite (desktop pin mode) ── */
-.suite-content-stage { position: relative; }
+.suite-content-stage {
+  position: relative;
+  overflow: hidden;
+}
 
-.js-suite-scroll .suite-content-stage { overflow: hidden; }
+.js-suite-scroll .suite-content-stage {
+  overflow: hidden;
+}
 
 .js-suite-scroll .suite-content-new {
   display: block;
   position: absolute;
   inset: 0;
-  background: #ffffff;      /* opaque — matches .mockup-browser-window, stops text bleed */
-  animation: none;          /* GSAP owns the transition now */
+  background: #ffffff;
+  /* opaque — matches .mockup-browser-window, stops text bleed */
+  animation: none;
+  /* GSAP owns the transition now */
 }
 
 /* Word-split entrance (header heading + paragraph) */
-.suite-word { display: inline-block; overflow: hidden; vertical-align: top; }
-.suite-word > span { display: inline-block; will-change: transform; }
+.suite-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.suite-word>span {
+  display: inline-block;
+  will-change: transform;
+}
 
 /* Fit the whole pinned block (header + pills + mockup) inside one
    viewport height so nothing gets cut off while pinned. */
@@ -731,16 +844,34 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;   /* top-aligned so there's no empty gap above */
-    gap: 4.75rem;                  /* breathing room between header · tabs · mockup */
-    padding-top: 4.5rem;           /* clear the sticky nav */
+    justify-content: flex-start;
+    /* top-aligned so there's no empty gap above */
+    gap: 4.75rem;
+    /* breathing room between header · tabs · mockup */
+    padding-top: 4.5rem;
+    /* clear the sticky nav */
     padding-bottom: 2rem;
   }
-  .js-suite-scroll .suite-split-header { margin-bottom: 0 !important; }
-  .js-suite-scroll .suite-split-header h2 { font-size: 2rem !important; }
-  .js-suite-scroll .suite-header-desc { font-size: 0.9rem; }
-  .js-suite-scroll .suite-tabs-wrapper { margin: 0 !important; }
-  .js-suite-scroll .mockup-browser-window { margin-top: 0 !important; }
+
+  .js-suite-scroll .suite-split-header {
+    margin-bottom: 0 !important;
+  }
+
+  .js-suite-scroll .suite-split-header h2 {
+    font-size: 2rem !important;
+  }
+
+  .js-suite-scroll .suite-header-desc {
+    font-size: 0.9rem;
+  }
+
+  .js-suite-scroll .suite-tabs-wrapper {
+    margin: 0 !important;
+  }
+
+  .js-suite-scroll .mockup-browser-window {
+    margin-top: 0 !important;
+  }
 
   /* Compress the panel content */
   .js-suite-scroll .suite-grid-new {
@@ -748,13 +879,38 @@
     gap: 2.5rem !important;
     align-items: center;
   }
-  .js-suite-scroll .suite-pill-new { margin-bottom: 0.6rem; }
-  .js-suite-scroll .suite-text-panel h3 { font-size: 1.55rem; margin-bottom: 0.6rem; }
-  .js-suite-scroll .suite-text-panel p { font-size: 0.9rem; line-height: 1.55; margin-bottom: 1rem; }
-  .js-suite-scroll .suite-bullets { margin-bottom: 1rem; }
-  .js-suite-scroll .suite-bullet { font-size: 0.85rem; margin-bottom: 0.5rem; }
-  .js-suite-scroll .suite-roi-box { padding: 10px 14px; font-size: 0.82rem; }
-  .js-suite-scroll .suite-visual-panel img { max-height: 300px; object-fit: cover; }
+
+  .js-suite-scroll .suite-pill-new {
+    margin-bottom: 0.6rem;
+  }
+
+  .js-suite-scroll .suite-text-panel h3 {
+    font-size: 1.55rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .js-suite-scroll .suite-text-panel p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+
+  .js-suite-scroll .suite-bullets {
+    margin-bottom: 1rem;
+  }
+
+  .js-suite-scroll .suite-bullet {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .js-suite-scroll .suite-roi-box {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+
+  .js-suite-scroll .suite-visual-panel img {
+    max-height: 300px;
+    object-fit: cover;
+  }
 }
-
-

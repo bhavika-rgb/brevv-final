@@ -261,6 +261,25 @@
   }
 }
 
+@media (max-width: 340px) {
+  .trust-badges {
+    padding: 50px 0 30px;
+  }
+  .core-card {
+    padding: 1.25rem 0.85rem !important;
+  }
+  .core-card h3 {
+    font-size: 1.1rem !important;
+  }
+  .core-card p {
+    font-size: 0.85rem !important;
+  }
+  .core-card-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
 /* ── Core Foundations — premium word-mask reveal ── */
 .core-anim-title .core-word {
   display: inline-block;

@@ -79,6 +79,22 @@
   .ecosystem-section { padding: 6rem 0; }
 }
 
+@media (max-width: 340px) {
+  .ecosystem-section {
+    padding: 4rem 0.75rem !important;
+  }
+  .ecosystem-title {
+    font-size: 1.6rem !important;
+  }
+  .ecosystem-lead {
+    font-size: 0.9rem !important;
+  }
+  .ecosystem-tag::before,
+  .ecosystem-tag::after {
+    width: 15px !important;
+  }
+}
+
 
 
 /* ── The Ecosystem statement reveal (tag → title → lead) ── */
