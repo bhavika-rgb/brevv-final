@@ -15,7 +15,7 @@ const scaleCards = [
       </>
     ),
     linkText: "Explore Higher Education",
-    image: "/assets/images/image(24).png",
+    image: "/assets/images/image (24).png",
     alt: "Higher Education Platform",
     cardClass: "card-blue",
   },
