@@ -41,8 +41,8 @@ export default function DemoModal() {
 
             <div className="form-group-modal">
               <label htmlFor="modal-institution">Institution Type</label>
-              <select id="modal-institution" required>
-                <option value="" disabled selected>Select institution type</option>
+              <select id="modal-institution" required defaultValue="">
+                <option value="" disabled>Select institution type</option>
                 <option value="university">Higher Education (University)</option>
                 <option value="corporate">Corporate L&D / Enterprise</option>
                 <option value="k12">K-12 School / District</option>
@@ -123,7 +123,9 @@ function initModal() {
     }
   };
 
+  const triggerNavMobile = document.getElementById('book-demo-trigger-nav-mobile');
   if (triggerNav) triggerNav.addEventListener('click', openModal);
+  if (triggerNavMobile) triggerNavMobile.addEventListener('click', openModal);
   if (triggerCta) triggerCta.addEventListener('click', openModal);
   if (triggerMobile) triggerMobile.addEventListener('click', openModal);
   if (closeBtn) closeBtn.addEventListener('click', closeModal);

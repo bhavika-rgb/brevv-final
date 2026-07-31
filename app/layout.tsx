@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Navigation from "@/components/Layout/Navigation/Navigation";
-import Footer from "@/components/Layout/Footer/Footer";
-import DemoModal from "@/components/DemoModal/DemoModal";
+import Navigation from "@/app/components/Layout/Navigation/Navigation";
+import Footer from "@/app/components/Layout/Footer/Footer";
+import DemoModal from "@/app/components/DemoModal/DemoModal";
 
 export const metadata: Metadata = {
   title: "Brevv - Transform Learning Into Measurable Success",

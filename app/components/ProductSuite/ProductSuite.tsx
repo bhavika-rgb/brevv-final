@@ -92,11 +92,27 @@ export default function ProductSuite() {
           </div>
 
           <div className="suite-select-wrapper mobile-only-select-wrapper">
-            <select id="suite-tab-select" className="suite-tab-select-input" defaultValue="suite-community">
-              {suiteTabs.map((item) => (
-                <option value={item.tabId} key={item.tabId}>{item.label}</option>
-              ))}
-            </select>
+            <div className="suite-mobile-select-nav">
+              <button className="suite-select-nav-btn prev-btn-select" aria-label="Previous Slide">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <div className="suite-select-input-container">
+                <div className="suite-tabs-scroll-container">
+                  <ul className="suite-tabs-pill-mobile">
+                    {suiteTabs.map((item) => (
+                      <li className="suite-tab-item-mobile" key={item.tabId}>
+                        <button className={`suite-tab-btn-pill-mobile${item.active ? " active" : ""}`} data-suite-tab={item.tabId}>
+                          {item.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <button className="suite-select-nav-btn next-btn-select" aria-label="Next Slide">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
           </div>
 
           <div className="relative w-full z-10">
@@ -127,8 +143,8 @@ export default function ProductSuite() {
                     <div className="suite-grid-new">
                       <div className="suite-text-panel">
                         <span className="suite-pill-new">{item.pill}</span>
-                        <h3>{item.heading}</h3>
-                        <p>{item.paragraph}</p>
+                        <h3 data-original-text={item.heading}>{item.heading}</h3>
+                        <p data-original-text={item.paragraph}>{item.paragraph}</p>
                       </div>
                       <div className="suite-visual-panel">
                         <img src={item.image} alt={item.alt} />
@@ -155,6 +171,7 @@ function initProductSuite() {
   const stage = section.querySelector<HTMLElement>('.suite-content-stage');
   const panels = Array.from(section.querySelectorAll<HTMLElement>('.suite-content-new'));
   const pillBtns = Array.from(section.querySelectorAll<HTMLElement>('.suite-tab-btn-pill'));
+  const mobilePillBtns = Array.from(section.querySelectorAll<HTMLElement>('.suite-tab-btn-pill-mobile'));
   const suiteSelect = document.getElementById('suite-tab-select') as HTMLSelectElement | null;
   const headingEl = section.querySelector<HTMLElement>('.about-title');
   const descEl = section.querySelector<HTMLElement>('.suite-header-desc');
@@ -198,8 +215,8 @@ function initProductSuite() {
     if (!h3.hasAttribute('data-original-text')) h3.setAttribute('data-original-text', h3.textContent.trim());
     if (!p.hasAttribute('data-original-text')) p.setAttribute('data-original-text', p.textContent.trim());
 
-    const textH3 = h3.getAttribute('data-original-text');
-    const textP = p.getAttribute('data-original-text');
+    const textH3 = h3.getAttribute('data-original-text') || h3.textContent.trim() || '';
+    const textP = p.getAttribute('data-original-text') || p.textContent.trim() || '';
     h3.innerHTML = ''; p.innerHTML = '';
 
     const bullets = targetContent.querySelector<HTMLElement>('.suite-bullets');
@@ -235,15 +252,80 @@ function initProductSuite() {
   // ---------- shared helpers ----------
   function setActiveIndex(index) {
     pillBtns.forEach((b, i) => b.classList.toggle('active', i === index));
+    mobilePillBtns.forEach((b, i) => b.classList.toggle('active', i === index));
     if (suiteSelect) suiteSelect.selectedIndex = index;
+    centerActiveMobileTab(index);
   }
 
-  // Non-pinned (mobile / reduced-motion) switch: original class-toggle behavior
+  function centerActiveMobileTab(index) {
+    const activeBtn = mobilePillBtns[index];
+    const scrollContainer = section.querySelector<HTMLElement>('.suite-tabs-scroll-container');
+    if (activeBtn && scrollContainer) {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      const targetScrollLeft = scrollContainer.scrollLeft + (btnRect.left - containerRect.left) - (containerRect.width / 2) + (btnRect.width / 2);
+      scrollContainer.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  // ---------- Navigation Buttons State ----------
+  const prevBtn = section.querySelector<HTMLButtonElement>('.prev-btn');
+  const nextBtn = section.querySelector<HTMLButtonElement>('.next-btn');
+  const prevBtnSelect = section.querySelector<HTMLButtonElement>('.prev-btn-select');
+  const nextBtnSelect = section.querySelector<HTMLButtonElement>('.next-btn-select');
+
+  function updateNavButtons(index) {
+    if (prevBtn) {
+      if (index === 0) {
+        prevBtn.classList.add('disabled');
+        prevBtn.setAttribute('disabled', 'true');
+      } else {
+        prevBtn.classList.remove('disabled');
+        prevBtn.removeAttribute('disabled');
+      }
+    }
+    if (nextBtn) {
+      if (index === panels.length - 1) {
+        nextBtn.classList.add('disabled');
+        nextBtn.setAttribute('disabled', 'true');
+      } else {
+        nextBtn.classList.remove('disabled');
+        nextBtn.removeAttribute('disabled');
+      }
+    }
+    if (prevBtnSelect) {
+      if (index === 0) {
+        prevBtnSelect.classList.add('disabled');
+        prevBtnSelect.setAttribute('disabled', 'true');
+      } else {
+        prevBtnSelect.classList.remove('disabled');
+        prevBtnSelect.removeAttribute('disabled');
+      }
+    }
+    if (nextBtnSelect) {
+      if (index === panels.length - 1) {
+        nextBtnSelect.classList.add('disabled');
+        nextBtnSelect.setAttribute('disabled', 'true');
+      } else {
+        nextBtnSelect.classList.remove('disabled');
+        nextBtnSelect.removeAttribute('disabled');
+      }
+    }
+  }
+
+  // Non-pinned (mobile / reduced-motion) switch: original class-toggle behavior + mobile translate
   function simpleShow(index) {
+    if (window.innerWidth <= 1024 && stage) {
+      stage.style.transform = `translateX(-${index * 100}%)`;
+    }
     panels.forEach((p, i) => p.classList.toggle('active', i === index));
     setActiveIndex(index);
     current = index;
     triggerTabTypewriter(panels[index]);
+    updateNavButtons(index);
   }
 
   // Pinned slide transition: incoming slides in from the right, on top
@@ -317,12 +399,78 @@ function initProductSuite() {
   pillBtns.forEach((btn, index) => {
     btn.addEventListener('click', () => { scrollActive ? scrollToIndex(index) : simpleShow(index); });
   });
+  mobilePillBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => { scrollActive ? scrollToIndex(index) : simpleShow(index); });
+  });
   if (suiteSelect) {
     suiteSelect.addEventListener('change', e => {
       const index = (e.target as HTMLSelectElement).selectedIndex;
       scrollActive ? scrollToIndex(index) : simpleShow(index);
     });
   }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (current > 0) {
+        scrollActive ? scrollToIndex(current - 1) : simpleShow(current - 1);
+      }
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (current < panels.length - 1) {
+        scrollActive ? scrollToIndex(current + 1) : simpleShow(current + 1);
+      }
+    });
+  }
+
+  if (prevBtnSelect) {
+    prevBtnSelect.addEventListener('click', () => {
+      if (current > 0) {
+        scrollActive ? scrollToIndex(current - 1) : simpleShow(current - 1);
+      }
+    });
+  }
+  if (nextBtnSelect) {
+    nextBtnSelect.addEventListener('click', () => {
+      if (current < panels.length - 1) {
+        scrollActive ? scrollToIndex(current + 1) : simpleShow(current + 1);
+      }
+    });
+  }
+
+  // Swipe gesture support for mobile
+  if (stage) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isDragging = false;
+
+    stage.addEventListener('touchstart', (e: any) => {
+      touchStartX = e.changedTouches[0].screenX;
+      isDragging = true;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (e: any) => {
+      if (!isDragging) return;
+      touchEndX = e.changedTouches[0].screenX;
+      const swipeThreshold = 50; // pixels
+      if (touchStartX - touchEndX > swipeThreshold) {
+        // Swipe Left -> Next
+        if (current < panels.length - 1) {
+          scrollActive ? scrollToIndex(current + 1) : simpleShow(current + 1);
+        }
+      } else if (touchEndX - touchStartX > swipeThreshold) {
+        // Swipe Right -> Prev
+        if (current > 0) {
+          scrollActive ? scrollToIndex(current - 1) : simpleShow(current - 1);
+        }
+      }
+      isDragging = false;
+    }, { passive: true });
+  }
+
+  // Initialize nav buttons state
+  updateNavButtons(0);
 
   // initial typewriter for the default active tab
   triggerTabTypewriter(panels[0]);

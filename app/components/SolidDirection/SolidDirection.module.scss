@@ -2,7 +2,7 @@
 .solid-direction-section {
   position: relative;
   width: 100%;
-  height: 180vh;
+  height: 130vh;
   background-color: #ffffff;
   overflow: visible;
 }
@@ -77,6 +77,8 @@
     transition: opacity 0.4s ease, transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    width: max-content;
   }
 
   .sd-video-layer.revealed .sd-fullscreen-hint {
@@ -293,7 +295,7 @@
 @media (max-width: 1024px) {
   .sd-gate {
     flex-direction: column;
-    gap: clamp(120px, 32vw, 260px);
+    gap: clamp(210px, 30vh, 260px);
     /* vertical space for the sphere */
   }
 
@@ -310,18 +312,26 @@
 }
 
 @media (max-width: 768px) {
+  .solid-direction-section {
+    height: 130vh;
+  }
+
+  .solid-direction-sticky {
+    height: 100vh;
+  }
+
   .sd-gate {
-    gap: clamp(110px, 34vw, 220px);
+    gap: clamp(170px, 24vh, 220px);
   }
 
   .gate-title {
-    font-size: clamp(1.6rem, 8.5vw, 2.8rem) !important;
+    font-size: clamp(1.5rem, 7.5vw, 2.4rem) !important;
   }
 }
 
 @media (max-width: 340px) {
   .sd-gate {
-    gap: clamp(80px, 28vw, 150px);
+    gap: clamp(170px, 25vh, 210px);
   }
 
   .gate-title {

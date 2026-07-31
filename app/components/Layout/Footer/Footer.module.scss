@@ -152,7 +152,7 @@
 
 /* Redesigned Footer matching reference screenshot */
 .footer {
-  background: linear-gradient(180deg, #ffffff 0%, #75baff 25%, #008CFF 50%, #031833 75%, #050811 100%);
+  background: #0f172a;
   color: #ffffff;
   padding: 100px 0 40px;
   border-top: none;
@@ -381,6 +381,90 @@
   }
   .footer-bottom {
     font-size: 0.78rem !important;
+  }
+}
+
+.footer-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.footer-contact-input,
+.footer-contact-textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.25s ease;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 140, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(0, 140, 255, 0.12);
+  }
+}
+
+.footer-contact-textarea {
+  resize: none;
+}
+
+.footer-contact-btn {
+  background-color: #008CFF;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 140, 255, 0.15);
+
+  &:hover {
+    background-color: #007ae5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 140, 255, 0.22);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.footer-bottom sup {
+  font-size: 0.65em;
+  vertical-align: super;
+  margin-left: 1px;
+}
+
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    text-align: center !important;
+    font-size: 0.72rem !important;
+    align-items: center !important;
+    margin-top: 1.5rem !important;
+
+    p {
+      white-space: nowrap !important;
+      margin: 0 !important;
+    }
   }
 }
 

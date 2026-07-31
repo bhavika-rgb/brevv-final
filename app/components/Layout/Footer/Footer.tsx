@@ -95,14 +95,20 @@ export default function Footer() {
 
           <div className="footer-column">
             <h4>Get In Touch</h4>
-            <ul className="footer-links">
+            <ul className="footer-links" style={{ marginBottom: '0.75rem' }}>
               <li>📧 <a href="mailto:hello@brevvlms.com">hello@brevvlms.com</a></li>
-
-              <li style={{ color: 'rgba(255,255,255,0.65)' }}>📍 India Support Office<br />
-                <span style={{ marginLeft: '1.7rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>Serving Global
-                  Clients</span>
-              </li>
             </ul>
+
+            <form className="footer-contact-form" onSubmit={(e) => {
+              e.preventDefault();
+              alert("Thank you for reaching out! We'll get back to you shortly.");
+            }}>
+              <input type="text" placeholder="Your Name" className="footer-contact-input" required />
+              <input type="email" placeholder="Your Email" className="footer-contact-input" required />
+              <textarea placeholder="Your Message" className="footer-contact-textarea" rows={3} required></textarea>
+              <button type="submit" className="footer-contact-btn">Send Message</button>
+            </form>
+
             <div className="social-links" style={{ marginTop: '1.25rem' }}>
               {socialLinks.map((link) => (
                 <a href="#" className="social-icon" title={link.title} key={link.title}>
@@ -116,8 +122,8 @@ export default function Footer() {
         <hr className="footer-divider" />
 
         <div className="footer-bottom">
-          <p>&copy;2026 Brevv Technologies. All Rights Reserved.</p>
-          <p>Built by The Foundary — India</p>
+          <p>&copy; 2026 Brevv Learning Technologies. All Rights Reserved.</p>
+          <p>Forged at the Foundary with Precision<sup>(SM)</sup></p>
         </div>
       </div>
     </footer>

@@ -22,7 +22,7 @@ export default function Navigation() {
   }, []);
 
   return (
-    <nav className="absolute top-0 left-0 right-0 z-20 w-full py-5 font-body bg-transparent">
+    <nav className="absolute top-0 left-0 right-0 z-50 w-full py-5 font-body bg-transparent">
       <div className="flex items-center justify-between px-3 sm:px-6 md:px-12 lg:px-20 max-w-[1600px] mx-auto w-full">
 
         <a href="#" className="flex items-center cursor-pointer z-30" id="logo-link">
@@ -102,11 +102,10 @@ export default function Navigation() {
                 <a href="#about"
                   className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#008CFF] transition-colors">The
                   Foundary DNA</a>
-                <a href="#"
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#008CFF] transition-colors">Documentation</a>
-                <a href="#"
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#008CFF] transition-colors">Support
-                  Center</a>
+                <a href="#partners"
+                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#008CFF] transition-colors">Core Foundations</a>
+                <a href="#cta"
+                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#008CFF] transition-colors">Contact &amp; Support</a>
               </div>
             </div>
           </div>
@@ -114,10 +113,10 @@ export default function Navigation() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <a href="#"
-            className="nav-login-btn hidden sm:inline-block px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors cursor-pointer">
+          <button id="book-demo-trigger-nav"
+            className="nav-login-btn hidden sm:inline-block px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors cursor-pointer bg-transparent border-none">
             Login
-          </a>
+          </button>
           <a href="#cta"
             className="nav-trial-btn rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium bg-white text-black transition-all shadow-sm cursor-pointer whitespace-nowrap">
             Start Free Trial
@@ -132,7 +131,14 @@ export default function Navigation() {
       </div>
 
       <div id="mobile-menu-drawer"
-        className="fixed inset-0 bg-black/95 z-25 flex flex-col items-center justify-center gap-7 md:hidden transition-all duration-300 transform translate-x-full overflow-y-auto py-16">
+        className="fixed inset-0 bg-black/95 z-40 flex flex-col items-center justify-center gap-7 md:hidden transition-all duration-300 transform translate-x-full overflow-y-auto py-16">
+        
+        {/* Dedicated Mobile Close Button inside Drawer */}
+        <button id="mobile-menu-close"
+          className="absolute top-6 right-6 flex items-center justify-center p-3 text-white/70 hover:text-white rounded-full bg-white/5 hover:bg-white/10 transition-colors focus:outline-none cursor-pointer z-50"
+          aria-label="Close Menu">
+          <i data-lucide="x" className="w-6 h-6"></i>
+        </button>
         <div className="text-center">
           <span className="text-white/40 text-xs uppercase tracking-widest">Features</span>
           <div className="mt-3 flex flex-col gap-2.5">
@@ -176,16 +182,15 @@ export default function Navigation() {
             <a href="#about"
               className="mobile-nav-link text-lg text-white/80 hover:text-white transition-colors font-medium cursor-pointer">The
               Foundary DNA</a>
-            <a href="#"
-              className="mobile-nav-link text-lg text-white/80 hover:text-white transition-colors font-medium cursor-pointer">Documentation</a>
-            <a href="#"
-              className="mobile-nav-link text-lg text-white/80 hover:text-white transition-colors font-medium cursor-pointer">Support
-              Center</a>
+            <a href="#partners"
+              className="mobile-nav-link text-lg text-white/80 hover:text-white transition-colors font-medium cursor-pointer">Core Foundations</a>
+            <a href="#cta"
+              className="mobile-nav-link text-lg text-white/80 hover:text-white transition-colors font-medium cursor-pointer">Contact &amp; Support</a>
           </div>
         </div>
         <div className="flex flex-col items-center gap-3 mt-2">
-          <a href="#"
-            className="mobile-nav-link text-white/70 text-base font-medium cursor-pointer">Login</a>
+          <button id="book-demo-trigger-nav-mobile"
+            className="mobile-nav-link text-white/70 text-base font-medium cursor-pointer bg-transparent border-none">Login</button>
           <a href="#cta"
             className="mobile-nav-link px-7 py-3 bg-white text-black text-sm font-bold rounded-full cursor-pointer">Start
             Free Trial</a>
@@ -205,38 +210,53 @@ function initMobileMenu() {
   const menuToggle = document.querySelector<HTMLElement>('.menu-toggle');
 
   if (mobileToggle && mobileDrawer) {
+    const closeMenu = () => {
+      mobileDrawer.classList.remove('translate-x-0');
+      mobileDrawer.classList.add('translate-x-full');
+      mobileToggle.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
+      const navEl = document.querySelector('nav');
+      if (navEl) navEl.classList.remove('mobile-menu-open');
+      document.body.style.overflow = ''; // Unlock background scrolling
+      document.body.style.height = '';
+      if ((window as any).lucide) {
+        (window as any).lucide.createIcons();
+      }
+    };
+
     mobileToggle.addEventListener('click', () => {
       const isOpen = mobileDrawer.classList.contains('translate-x-0');
       if (isOpen) {
-        mobileDrawer.classList.remove('translate-x-0');
-        mobileDrawer.classList.add('translate-x-full');
-        mobileToggle.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
-        mobileToggle.classList.remove('text-white');
-        mobileToggle.classList.add('text-[#0F172A]');
+        closeMenu();
       } else {
         mobileDrawer.classList.remove('translate-x-full');
         mobileDrawer.classList.add('translate-x-0');
         mobileToggle.innerHTML = '<i data-lucide="x" class="w-6 h-6"></i>';
-        mobileToggle.classList.remove('text-[#0F172A]');
-        mobileToggle.classList.add('text-white');
+        const navEl = document.querySelector('nav');
+        if (navEl) navEl.classList.add('mobile-menu-open');
+        document.body.style.overflow = 'hidden'; // Lock background scrolling
+        document.body.style.height = '100dvh';
       }
       if ((window as any).lucide) {
         (window as any).lucide.createIcons(); // Refresh Lucide icons in the toggle button
       }
     });
 
+    // Close button inside the drawer
+    const mobileClose = document.getElementById('mobile-menu-close');
+    if (mobileClose) {
+      mobileClose.addEventListener('click', closeMenu);
+    }
+
+    // Close mobile menu when clicking the overlay outside of menu content
+    mobileDrawer.addEventListener('click', (e) => {
+      if (e.target === mobileDrawer) {
+        closeMenu();
+      }
+    });
+
     // Close mobile menu when nav link is clicked
     mobileNavLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mobileDrawer.classList.remove('translate-x-0');
-        mobileDrawer.classList.add('translate-x-full');
-        mobileToggle.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
-        mobileToggle.classList.remove('text-white');
-        mobileToggle.classList.add('text-[#0F172A]');
-        if ((window as any).lucide) {
-          (window as any).lucide.createIcons();
-        }
-      });
+      link.addEventListener('click', closeMenu);
     });
   }
 

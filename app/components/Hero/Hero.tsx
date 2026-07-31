@@ -14,12 +14,13 @@ export default function Hero() {
     initHeroSlider();
     initLazyVideo();
     initLoaderGate();
+    initMobileCta();
   }, []);
 
   return (
     <div className="sui-hero-container w-full min-h-screen flex flex-col">
 
-      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+      <div className="hero-bg-video-wrapper">
         <video id="hero-bg-video"
           className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-0 transition-opacity duration-1000 ease-in-out hero-video-cinematic"
           autoPlay loop muted playsInline>
@@ -61,6 +62,23 @@ export default function Hero() {
         className="hero-content-section relative z-10 flex flex-col items-center justify-start flex-grow w-full px-4 text-center overflow-hidden pb-12">
 
         <h1 className="hero-headline">The Future of Learning, Architected for Today.</h1>
+
+        <p className="hero-mobile-subheading">
+          Empower learners, educators, and organizations with a modern learning platform designed for engagement, performance, and growth.
+        </p>
+
+        <div className="hero-mobile-cta-wrapper">
+          <a href="#cta" className="hero-mobile-btn-primary">Explore Platform</a>
+          <button id="book-demo-trigger-mobile" className="hero-mobile-btn-secondary">Book a Demo</button>
+        </div>
+
+        <div className="hero-video-card-container">
+          <video id="hero-card-video"
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-100 transition-opacity duration-1000 ease-in-out"
+            autoPlay loop muted playsInline>
+            <source src="/assets/videos/1.1.mp4" data-src="/assets/videos/1.1.mp4" type="video/mp4" />
+          </video>
+        </div>
 
       </section>
     </div>
@@ -183,59 +201,61 @@ function initHeroSlider() {
 }
 
 function initLazyVideo() {
-  const video = document.getElementById('hero-bg-video') as HTMLVideoElement | null;
-  if (!video) return;
+  const videos = document.querySelectorAll<HTMLVideoElement>('#hero-bg-video, #hero-card-video');
+  videos.forEach(video => {
+    const source = video.querySelector<HTMLSourceElement>('source');
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  const source = video.querySelector<HTMLSourceElement>('source');
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    const isSlowConnection = connection && (connection.saveData || ['slow-2g', '2g', '3g'].includes(connection.effectiveType));
 
-  const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-  const isSlowConnection = connection && (connection.saveData || ['slow-2g', '2g', '3g'].includes(connection.effectiveType));
-
-  const loadVideo = () => {
-    if (source && source.dataset.src) {
-      source.src = source.dataset.src;
-      video.load();
-    }
-  };
-
-  if (isSlowConnection) {
-    video.style.display = 'none';
-  } else {
-    requestAnimationFrame(() => {
-      setTimeout(loadVideo, 100);
-    });
-  }
-
-  video.addEventListener('playing', () => {
-    video.classList.remove('opacity-0');
-    video.classList.add('opacity-100');
-  });
-
-  video.addEventListener('loadeddata', () => {
-    try {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth / 4;
-      canvas.height = video.videoHeight / 4;
-      const ctx = canvas.getContext('2d');
-      ctx!.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-      video.style.backgroundImage = `url(${dataUrl})`;
-      video.style.backgroundSize = 'cover';
-      video.style.backgroundPosition = 'center';
-    } catch (e) {
-      // ignore canvas errors
-    }
-  });
-
-  video.addEventListener('canplay', () => {
-    setTimeout(() => {
-      if (video.paused && !isMobile) {
-        video.play().catch(() => { });
+    const loadVideo = () => {
+      if (source && source.dataset.src) {
+        source.src = source.dataset.src;
+        video.load();
       }
+    };
+
+    if (video.id === 'hero-bg-video' && (isSlowConnection || window.innerWidth < 768)) {
+      video.style.display = 'none';
+      return;
+    } else {
+      video.style.display = 'block';
+      requestAnimationFrame(() => {
+        setTimeout(loadVideo, 100);
+      });
+    }
+
+    video.addEventListener('playing', () => {
       video.classList.remove('opacity-0');
       video.classList.add('opacity-100');
-    }, 300);
+    });
+
+    video.addEventListener('loadeddata', () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth / 4;
+        canvas.height = video.videoHeight / 4;
+        const ctx = canvas.getContext('2d');
+        ctx!.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        video.style.backgroundImage = `url(${dataUrl})`;
+        video.style.backgroundSize = 'cover';
+        video.style.backgroundPosition = 'center';
+      } catch (e) {
+        // ignore canvas errors
+      }
+    });
+
+    video.addEventListener('canplay', () => {
+      setTimeout(() => {
+        if (video.paused) {
+          video.play().catch(() => { });
+        }
+        video.classList.remove('opacity-0');
+        video.classList.add('opacity-100');
+      }, 300);
+    });
   });
 }
 
@@ -255,5 +275,25 @@ function initLoaderGate() {
       }
       loaderBar.style.width = progress + "%";
     }, interval);
+  }
+}
+
+function initMobileCta() {
+  const triggerMobile = document.getElementById('book-demo-trigger-mobile');
+  if (triggerMobile) {
+    triggerMobile.addEventListener('click', () => {
+      const demoModal = document.getElementById('demo-modal');
+      if (demoModal) {
+        demoModal.style.display = 'flex';
+        // Reset form view when opening
+        const formContent = document.getElementById('modal-form-content');
+        const successContent = document.getElementById('modal-success-content');
+        const modalForm = document.getElementById('modal-demo-form') as HTMLFormElement | null;
+        if (formContent) formContent.style.display = 'block';
+        if (successContent) successContent.style.display = 'none';
+        if (modalForm) modalForm.reset();
+        document.body.style.overflow = 'hidden'; // Lock page scroll
+      }
+    });
   }
 }

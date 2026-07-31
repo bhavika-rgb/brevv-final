@@ -12,13 +12,15 @@ export default function SolidDirection() {
     const handleOpenModal = () => setIsModalOpen(true);
     window.addEventListener("open-sd-video-modal", handleOpenModal);
 
+    let cleanup: (() => void) | undefined;
     if (!ran.current) {
       ran.current = true;
-      initSphereReveal();
+      cleanup = initSphereReveal();
     }
 
     return () => {
       window.removeEventListener("open-sd-video-modal", handleOpenModal);
+      cleanup?.();
     };
   }, []);
 
@@ -88,7 +90,17 @@ export default function SolidDirection() {
 
 // ─── Sphere → halo → video reveal (ported from the idk2 preview) ───
 
-function initSphereReveal(): (() => void) | void {
+type RevealRefs = {
+  section: HTMLElement;
+  leftText: HTMLElement;
+  rightText: HTMLElement;
+  halo: HTMLElement;
+  videoLayer: HTMLElement;
+  progressFill: HTMLElement | null;
+  revealVideo: HTMLVideoElement | null;
+};
+
+function initSphereReveal(): (() => void) | undefined {
   const canvas = document.getElementById("sd-sphere-canvas") as HTMLCanvasElement | null;
   const section = document.getElementById("solid-direction");
   const leftText = document.getElementById("sd-left-text");
@@ -100,7 +112,23 @@ function initSphereReveal(): (() => void) | void {
 
   const revealVideo = videoLayer.querySelector("video") as HTMLVideoElement | null;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  const refs: RevealRefs = { section, leftText, rightText, halo, videoLayer, progressFill, revealVideo };
+
+  // ── Guard: some environments (sandboxed previews, hardware-accel-off browsers,
+  // too many live WebGL contexts from hot-reload) throw on renderer creation.
+  // Never let that crash the page — fall back to a sphere-less scroll reveal.
+  let renderer: THREE.WebGLRenderer | null = null;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  } catch (err) {
+    console.warn("[SolidDirection] WebGL context creation failed, using fallback reveal:", err);
+  }
+
+  if (!renderer) {
+    canvas.style.display = "none";
+    return initFallbackReveal(refs);
+  }
+
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new THREE.Scene();
@@ -167,9 +195,9 @@ function initSphereReveal(): (() => void) | void {
     const h = stickyEl?.clientHeight || window.innerHeight;
     camera.aspect = w / h;
     const isMobile = w <= 768;
-    camera.position.z = isMobile ? 6 : Math.min(40, Math.max(3.5, 6 * (h / Math.min(w, h))));
+    camera.position.z = isMobile ? 6.8 : Math.min(40, Math.max(3.5, 6 * (h / Math.min(w, h))));
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h, false);
+    renderer!.setSize(w, h, false);
   };
 
   let resizeObserver: ResizeObserver | null = null;
@@ -190,13 +218,13 @@ function initSphereReveal(): (() => void) | void {
   const setVideoPlaying = (shouldPlay: boolean) => {
     if (!revealVideo || shouldPlay === videoIsPlaying) return;
     videoIsPlaying = shouldPlay;
-    if (shouldPlay) revealVideo.play().catch(() => {});
+    if (shouldPlay) revealVideo.play().catch(() => { });
     else revealVideo.pause();
   };
 
   const computeProgress = () => {
     const rect = section.getBoundingClientRect();
-    const total = rect.height - window.innerHeight;
+    const total = Math.max(1, rect.height - window.innerHeight);
     const scrolled = -rect.top;
     return Math.max(0, Math.min(1, scrolled / total));
   };
@@ -210,9 +238,27 @@ function initSphereReveal(): (() => void) | void {
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
+  // ── WebGL context loss handling. A context that's created fine can still be
+  // lost later (GPU driver reset, tab backgrounding on mobile, too many contexts
+  // opened elsewhere). Without this, rendering silently freezes; with it, we stop
+  // the RAF loop cleanly instead of hammering a dead context every frame.
+  let contextLost = false;
+  const onContextLost = (e: Event) => {
+    e.preventDefault();
+    contextLost = true;
+    console.warn("[SolidDirection] WebGL context lost.");
+  };
+  const onContextRestored = () => {
+    contextLost = false;
+    console.info("[SolidDirection] WebGL context restored.");
+  };
+  canvas.addEventListener("webglcontextlost", onContextLost, false);
+  canvas.addEventListener("webglcontextrestored", onContextRestored, false);
+
   let rafId = 0;
   const animate = () => {
     rafId = requestAnimationFrame(animate);
+    if (contextLost) return;
 
     // Smooth lerp for buttery motion on mobile & desktop
     currentProgress += (targetProgress - currentProgress) * 0.12;
@@ -266,7 +312,7 @@ function initSphereReveal(): (() => void) | void {
     const speed = baseRotSpeed + currentProgress * 0.006;
     group.rotation.y += speed;
     group.rotation.x = Math.sin(Date.now() * 0.0002) * 0.15;
-    renderer.render(scene, camera);
+    renderer!.render(scene, camera);
   };
   animate();
 
@@ -308,6 +354,8 @@ function initSphereReveal(): (() => void) | void {
     resizeObserver?.disconnect();
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onResize);
+    canvas.removeEventListener("webglcontextlost", onContextLost);
+    canvas.removeEventListener("webglcontextrestored", onContextRestored);
     if (fullscreenBtn) fullscreenBtn.removeEventListener("click", handleVideoClick);
     videoLayer.removeEventListener("click", handleVideoClick);
     document.removeEventListener("fullscreenchange", onFullscreenChange);
@@ -318,6 +366,89 @@ function initSphereReveal(): (() => void) | void {
     ptMat.dispose();
     lineMat.dispose();
     coreMat.dispose();
-    renderer.dispose();
+    renderer!.dispose();
+  };
+}
+
+// ── Fallback path: no WebGL available. Keeps the text-split + halo/video reveal
+// working off scroll progress alone, just without the 3D sphere.
+function initFallbackReveal(refs: RevealRefs): () => void {
+  const { section, leftText, rightText, halo, videoLayer, progressFill, revealVideo } = refs;
+
+  let targetProgress = 0;
+  let currentProgress = 0;
+  let revealed = false;
+  let videoIsPlaying = false;
+
+  const setVideoPlaying = (shouldPlay: boolean) => {
+    if (!revealVideo || shouldPlay === videoIsPlaying) return;
+    videoIsPlaying = shouldPlay;
+    if (shouldPlay) revealVideo.play().catch(() => { });
+    else revealVideo.pause();
+  };
+
+  const computeProgress = () => {
+    const rect = section.getBoundingClientRect();
+    const total = Math.max(1, rect.height - window.innerHeight);
+    const scrolled = -rect.top;
+    return Math.max(0, Math.min(1, scrolled / total));
+  };
+
+  const REVEAL_AT = 0.55;
+
+  const onScroll = () => {
+    targetProgress = computeProgress();
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  let rafId = 0;
+  const animate = () => {
+    rafId = requestAnimationFrame(animate);
+
+    currentProgress += (targetProgress - currentProgress) * 0.12;
+    if (Math.abs(targetProgress - currentProgress) < 0.0001) {
+      currentProgress = targetProgress;
+    }
+
+    const stacked = window.innerWidth <= 1024;
+    const textT = Math.min(currentProgress, 0.4) / 0.4;
+    const shift = textT * (stacked ? window.innerHeight : window.innerWidth) * 0.65;
+    if (stacked) {
+      leftText.style.transform = `translateY(${-shift}px)`;
+      rightText.style.transform = `translateY(${shift}px)`;
+    } else {
+      leftText.style.transform = `translateX(${-shift}px)`;
+      rightText.style.transform = `translateX(${shift}px)`;
+    }
+
+    let haloScale: number;
+    if (currentProgress < 0.4) {
+      haloScale = 0.02;
+    } else if (currentProgress < REVEAL_AT) {
+      const t = (currentProgress - 0.4) / (REVEAL_AT - 0.4);
+      haloScale = 0.02 + t * 1.0;
+    } else {
+      haloScale = 1.0;
+    }
+
+    halo.style.transform = `translate(-50%,-50%) scale(${haloScale})`;
+
+    const shouldReveal = currentProgress >= REVEAL_AT;
+    if (shouldReveal !== revealed) {
+      revealed = shouldReveal;
+      halo.classList.toggle("revealed", revealed);
+      videoLayer.classList.toggle("revealed", revealed);
+      setVideoPlaying(revealed);
+    }
+
+    if (!revealed) halo.style.opacity = String(Math.min(1, haloScale));
+    if (progressFill) progressFill.style.width = currentProgress * 100 + "%";
+  };
+  animate();
+
+  return () => {
+    cancelAnimationFrame(rafId);
+    window.removeEventListener("scroll", onScroll);
   };
 }

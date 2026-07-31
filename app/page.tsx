@@ -1,14 +1,14 @@
-import Hero from "@/components/Hero/Hero";
-import Ecosystem from "@/components/Ecosystem/Ecosystem";
-import CoreFoundations from "@/components/CoreFoundations/CoreFoundations";
-import ProductSuite from "@/components/ProductSuite/ProductSuite";
-import Comparison from "@/components/Comparison/Comparison";
-import SolidDirection from "@/components/SolidDirection/SolidDirection";
-import Scale from "@/components/Scale/Scale";
-import Sectors from "@/components/Sectors/Sectors";
-import FAQ from "@/components/FAQ/FAQ";
-import CTA from "@/components/CTA/CTA";
-import Foundary from "@/components/Foundary/Foundary";
+import Hero from "@/app/components/Hero/Hero";
+import Ecosystem from "@/app/components/Ecosystem/Ecosystem";
+import CoreFoundations from "@/app/components/CoreFoundations/CoreFoundations";
+import ProductSuite from "@/app/components/ProductSuite/ProductSuite";
+import Comparison from "@/app/components/Comparison/Comparison";
+import SolidDirection from "@/app/components/SolidDirection/SolidDirection";
+import Scale from "@/app/components/Scale/Scale";
+import Sectors from "@/app/components/Sectors/Sectors";
+import FAQ from "@/app/components/FAQ/FAQ";
+import CTA from "@/app/components/CTA/CTA";
+import Foundary from "@/app/components/Foundary/Foundary";
 
 export default function Page() {
   return (
